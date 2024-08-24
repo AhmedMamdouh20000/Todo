@@ -32,6 +32,10 @@ class AppTheme {
         ),
       ),
     ),
+    appBarTheme: AppBarTheme(
+      backgroundColor: primary,
+      foregroundColor: white,
+    ),
     elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
       backgroundColor: primary,
