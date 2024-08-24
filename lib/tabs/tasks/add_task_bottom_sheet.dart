@@ -1,9 +1,13 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:todo/app_theme.dart';
+import 'package:todo/firebase_functions.dart';
+import 'package:todo/models/task_model.dart';
 import 'package:todo/tabs/tasks/default_elevated_button.dart';
 import 'package:todo/tabs/tasks/default_text_form_field.dart';
+import 'package:todo/tabs/tasks/tasks_provider.dart';
 
 class AddTaskBottomSheet extends StatefulWidget {
   @override
@@ -39,8 +43,8 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return 'Title Can not be empty';
-                  }else
-                    return null ;
+                  } else
+                    return null;
                 },
                 controller: titleController,
                 hintText: 'Enter Task Title',
@@ -51,8 +55,8 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return 'Description Can not be empty';
-                  }else
-                    return null ;
+                  } else
+                    return null;
                 },
                 controller: describtionController,
                 hintText: 'Enter Task Description',
@@ -90,15 +94,56 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                 ),
               ),
               SizedBox(height: 32),
-              DefaultElevatedButton(onPressed: () {
-                if(formKey.currentState!.validate()){
-                  print('task added');
-                }else return;
-              }, label: 'Submit'),
+              DefaultElevatedButton(
+                  onPressed: () {
+                    if (formKey.currentState!.validate()) {
+                      addTask();
+                    } else {
+                      return;
+                    }
+                  },
+                  label: 'Submit'),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  void addTask() {
+    FirebaseFunctions.addTaskToFireStore(
+      TaskModel(
+        title: titleController.text,
+        description: describtionController.text,
+        date: selectedDate,
+      ),
+    ).timeout(
+      Duration(microseconds: 500),
+      onTimeout: () {
+        Navigator.of(context).pop();
+        Provider.of<TasksProvider>(context, listen: false).getTasks();
+        Fluttertoast.showToast(
+          msg: "Task Added Successfully !",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 3,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      },
+    ).catchError(
+      (_) {
+        Fluttertoast.showToast(
+            msg: "Something went wrong !",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 3,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+      },
     );
   }
 }
