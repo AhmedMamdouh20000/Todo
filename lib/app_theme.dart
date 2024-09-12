@@ -1,15 +1,14 @@
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  static Color primary = Color(0xff5D9CEC);
-  static Color backGroundColorLight = Color(0xffDFECDB);
-  static Color backGroundColorDark = Color(0xff060E1E);
-  static Color red = Color(0xffEC4B4B);
-  static Color green = Color(0xff61E757);
-  static Color grey = Color(0xffC8C9CB);
-  static Color white = Color(0xffffffff);
+  static Color primary = const Color(0xff5D9CEC);
+  static Color backGroundColorLight = const Color(0xffDFECDB);
+  static Color backGroundColorDark = const Color(0xff060E1E);
+  static Color red = const Color(0xffEC4B4B);
+  static Color green = const Color(0xff61E757);
+  static Color grey = const Color(0xffC8C9CB);
+  static Color white = const Color(0xffffffff);
 
   static ThemeData lightTheme = ThemeData(
     primaryColor: primary,

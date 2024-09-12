@@ -11,9 +11,9 @@ class TasksProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getTasks() async {
+  Future<void> getTasks(String userId) async {
     List<TaskModel> allTasks =
-        await FirebaseFunctions.getAllTasksFromFireStore();
+        await FirebaseFunctions.getAllTasksFromFireStore(userId);
     tasks = allTasks
         .where(
           (task) =>

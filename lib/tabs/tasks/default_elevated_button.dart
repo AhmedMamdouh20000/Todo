@@ -1,14 +1,13 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:todo/app_theme.dart';
 
 class DefaultElevatedButton extends StatelessWidget {
-  String label;
+  final String label;
 
-  VoidCallback onPressed;
+  final VoidCallback onPressed;
 
-  DefaultElevatedButton({
-    required this.onPressed,
+  const DefaultElevatedButton({super.key,
+     required this.onPressed,
     required this.label,
   });
 

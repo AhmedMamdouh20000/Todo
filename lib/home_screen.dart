@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:todo/app_theme.dart';
 import 'package:todo/tabs/settings/settings_tab.dart';
@@ -6,7 +5,9 @@ import 'package:todo/tabs/tasks/add_task_bottom_sheet.dart';
 import 'package:todo/tabs/tasks/tasks_tab.dart';
 
 class HomeScreen extends StatefulWidget {
-  static const String routeName = '/';
+  static const String routeName = 'homeScreen';
+
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -16,8 +17,8 @@ class _HomeScreenState extends State<HomeScreen> {
   int currentIndex = 0;
 
   List<Widget> tabs = [
-    TasksTab(),
-    SettingsTab(),
+    const TasksTab(),
+     const SettingsTab(),
   ];
 
   @override
@@ -29,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
         padding: EdgeInsets.zero,
         surfaceTintColor: AppTheme.backGroundColorLight,
         clipBehavior: Clip.antiAliasWithSaveLayer,
-        shape: CircularNotchedRectangle(),
+        shape: const CircularNotchedRectangle(),
         child: BottomNavigationBar(
           elevation: 0,
           currentIndex: currentIndex,
@@ -38,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
               currentIndex = index;
             });
           },
-          items: [
+          items: const [
             BottomNavigationBarItem(
               label: 'Tasks',
               icon: Icon(
@@ -57,13 +58,14 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(
+        child: const Icon(
           Icons.add,
           size: 32,
         ),
         onPressed: () => showModalBottomSheet(
           context: context,
-          builder: (_) => AddTaskBottomSheet(),
+          isScrollControlled: true,
+          builder: (_) => const AddTaskBottomSheet(),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

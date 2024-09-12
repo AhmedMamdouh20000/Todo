@@ -1,23 +1,40 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/app_theme.dart';
-import 'package:todo/models/task_model.dart';
+import 'package:todo/auth/user_provider.dart';
 import 'package:todo/tabs/tasks/task_edit_tab.dart';
 import 'package:todo/tabs/tasks/task_item.dart';
 import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:todo/tabs/tasks/tasks_provider.dart';
 
-class TasksTab extends StatelessWidget {
+class TasksTab extends StatefulWidget {
+  const TasksTab({super.key});
+
+  @override
+  State<TasksTab> createState() => _TasksTabState();
+}
+
+class _TasksTabState extends State<TasksTab> {
+  bool shouldGetTasks = true;
+
   @override
   Widget build(BuildContext context) {
     TasksProvider tasksProvider = Provider.of<TasksProvider>(context);
+    if (shouldGetTasks) {
+      tasksProvider.getTasks(
+        Provider.of<UserProvider>(context, listen: false).currentUser!.id,
+      );
+      shouldGetTasks = false;
+    }
     return Scaffold(
       appBar: AppBar(),
       body: Stack(
         children: [
           Container(
-            padding: EdgeInsets.only(left: 35),
+            padding: const EdgeInsets.only(left: 35),
+            width: double.infinity,
+            color: AppTheme.primary,
+            height: MediaQuery.of(context).size.height * 0.09,
             child: Text(
               'To Do List',
               style: Theme.of(context).textTheme.titleMedium!.copyWith(
@@ -25,11 +42,8 @@ class TasksTab extends StatelessWidget {
                     fontSize: 22,
                   ),
             ),
-            width: double.infinity,
-            color: AppTheme.primary,
-            height: MediaQuery.of(context).size.height * 0.09,
           ),
-          SizedBox(
+          const SizedBox(
             height: 8,
           ),
           Column(
@@ -39,19 +53,24 @@ class TasksTab extends StatelessWidget {
               ),
               EasyInfiniteDateTimeLine(
                 lastDate: DateTime.now().add(
-                  Duration(days: 30),
+                  const Duration(days: 30),
                 ),
                 firstDate: DateTime.now(),
                 focusDate: tasksProvider.selectedDate,
                 onDateChange: (selectedDate) {
                   tasksProvider.changeSelectedDate(selectedDate);
-                  tasksProvider.getTasks();
+                  tasksProvider.getTasks(
+                    Provider.of<UserProvider>(context, listen: false)
+                        .currentUser!
+                        .id,
+                  );
                 },
                 showTimelineHeader: false,
                 activeColor: AppTheme.white,
                 dayProps: EasyDayProps(
+                  dayStructure: DayStructure.dayNumDayStr,
                   todayStyle: DayStyle(
-                    monthStrStyle: TextStyle(color: Colors.transparent),
+                    monthStrStyle: const TextStyle(color: Colors.transparent),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
                         color: AppTheme.white),
@@ -62,16 +81,24 @@ class TasksTab extends StatelessWidget {
                       color: AppTheme.white,
                       borderRadius: BorderRadius.circular(5),
                     ),
-                    dayStrStyle: Theme.of(context)
-                        .textTheme
-                        .titleSmall!
-                        .copyWith(color: AppTheme.primary),
-                    monthStrStyle: TextStyle(color: Colors.transparent),
-                    dayNumStyle: Theme.of(context).textTheme.titleMedium,
+                    dayStrStyle:
+                        Theme.of(context).textTheme.titleSmall!.copyWith(
+                              color: AppTheme.primary,
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
+                    dayNumStyle:
+                        Theme.of(context).textTheme.titleMedium!.copyWith(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
                   ),
                   inactiveDayStyle: DayStyle(
-                    dayStrStyle: Theme.of(context).textTheme.titleSmall,
-                    monthStrStyle: TextStyle(color: Colors.transparent,),
+                    dayStrStyle:
+                        Theme.of(context).textTheme.titleSmall!.copyWith(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
                         color: AppTheme.white),
@@ -80,14 +107,10 @@ class TasksTab extends StatelessWidget {
               ),
               Expanded(
                 child: ListView.builder(
-                  padding: EdgeInsets.only(
+                  padding: const EdgeInsets.only(
                     top: 20,
                   ),
-                  itemBuilder: (_, index) => InkWell(
-                      onTap: () {
-                        Navigator.of(context).pushNamed(TaskEditTab.routeName);
-                      },
-                      child: TaskItem(tasksProvider.tasks[index])),
+                  itemBuilder: (_, index) => TaskItem(tasksProvider.tasks[index]),
                   itemCount: tasksProvider.tasks.length,
                 ),
               ),
